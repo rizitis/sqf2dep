@@ -10,6 +10,6 @@ Install sbopkg and synchronize it to ponce repo if needed...or stay as it is for
 
 Run sqf2dep and wait some time until finish.
 Now you can create a fork of ponce repo or SlackBuilds and add .dep files or slack-required files
-you know what your package-manager need...
+to the right place. You should know what your package-manager need...
 
 You can maintain your repo and enjoy your Slackware-based distro.
