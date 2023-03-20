@@ -44,6 +44,7 @@ done
 repo=/tmp/slackbuilds-current
 cd /tmp || exit
 rm current.zip*
+mv $repo $repo.BAK
 # for stable replace github url and unzip command...
 wget https://github.com/Ponce/slackbuilds/archive/refs/heads/current.zip
 unzip current.zip
