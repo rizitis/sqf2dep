@@ -27,14 +27,14 @@ sqg -a
 # update local Slackware system database
 updatedb
 
-# create package.dep and slack-recuired files
+# create package.dep and slack-required files
 dir=/tmp/sqf2dep
 rm -r $dir
 for i in `ls /var/lib/sbopkg/queues/`; do
 mkdir -p $dir || exit
 mkdir -p $dir/"$i" || exit
 cat /var/lib/sbopkg/queues/"$i" > $dir/"$i"/"$i"
-cat /var/lib/sbopkg/queues/"$i" > $dir/"$i"/slack-recuired
+cat /var/lib/sbopkg/queues/"$i" > $dir/"$i"/slack-required
 cd $dir || exit
 rename 'sqf' 'dep' "$i"/*.sqf
 rename '.sqf' '' "$i"
@@ -52,7 +52,7 @@ rm current.zip slackbuilds-current/README slackbuilds-current/ChangeLog.txt
 cd $repo || exit
 # copy paste .dep and slack-required files to the correct repo folders
 for i in `ls /tmp/sqf2dep/`; do
-cp /tmp/sqf2dep/"$i"/slack-recuired $repo/*/"$i"/
+cp /tmp/sqf2dep/"$i"/slack-required $repo/*/"$i"/
 cp /tmp/sqf2dep/"$i"/"$i".dep $repo/*/"$i"/
 done
 
