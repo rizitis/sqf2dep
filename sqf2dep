@@ -13,7 +13,7 @@ echo "ROOT ACCESS PLEASE OR GO HOME..."
 exit 1
 fi
 
-
+NUMJOBS=${NUMJOBS:-" -j$(expr $(nproc) + 1) "}
 #*************************************************************************************************************************
 # If you want to use ponce repo for Slackware-current, (I did it for this script), then create a file (or edit if exist) *
 # /root/.sbopkg.conf                                                                                                     *
@@ -69,7 +69,7 @@ done
 #* COLORS = false                                                      *#
 #* ASCII_CHARACTERS = false                                            *#
 #***********************************************************************#
-#NUMJOBS=${NUMJOBS:-" -j$(expr $(nproc) + 1) "}
+
 slpkg -yP update
 # slpkg will find and print the packages that dependees on "$i"package
 repo=/tmp/slackbuilds-current
@@ -79,6 +79,7 @@ for i in `ls /tmp/sqf2dep`; do
 slpkg -e $i >> $dir/"$i"/dependees-on
 # remove last line
 sed -i '$d' $dir/"$i"/dependees-on
+sed -i '$d' $dir/"$i"/dependees-on
 # remove 3 first lines
 sed -i '1,3d' $dir/"$i"/dependees-on
 # remove the specific character (+=)
@@ -87,6 +88,9 @@ sed -i 's/+=//' $dir/"$i"/dependees-on
 sed -i '/^No/d' $dir/"$i"/dependees-on
 # remove empty lines
 sed -i '/^[[:space:]]*$/d' $dir/"$i"/dependees-on
+# remove tabs,spaces etc...
+sed -i 's/^[ \t]*//' $dir/"$i"/dependees-on
+wait
 if [ ! -s $dir/"$i"/dependees-on ] ; then
   rm $dir/"$i"/dependees-on
 fi
@@ -95,12 +99,16 @@ rsync  --inplace /tmp/sqf2dep/"$i"/dependees-on $repo/*/"$i"/
 done
 
 # Make new SLACKBUILDS.TXT using @bassmadrigal script https://www.linuxquestions.org/questions/slackware-14/script-for-building-a-slackbuilds-txt-4175598436/#post5661600
-repo=/tmp/slackbuilds-current
+repo=/tmp/slackbuilds-current 
 cd $repo || exit
 wget https://raw.githubusercontent.com/rizitis/sqf2dep/main/create-SLACKBUILDS_TXT
 chmod +x create-SLACKBUILDS_TXT
 bash create-SLACKBUILDS_TXT > SLACKBUILDS.TXT
+wait
 rm create-SLACKBUILDS_TXT*
+
+
+echo "sqf2dep:"
 echo "YOUR LOCAL REPO IS READY. IF YOU WANT TO UPLOAD IT AS A PUPLIC REPO, "
 echo "PLEASE CREATE A NEW ChangeLog.txt file and README"
 echo "If you want to create a binary repo from these SlackBuilds you must edit every packages.SlackBuild"
