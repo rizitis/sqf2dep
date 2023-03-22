@@ -1,9 +1,10 @@
 #!/bin/bash
 
+# Written by Anagnostakis Ioannis GR Crete <rizitis@gmail.com> 03/2023
 # This sqf2dep script can fork SBo repo and create package.dep and slack-required files if your package-manager need them...
-# After you can use it as local repo or upload it as public if you can maintain it.
+# Also will find for you the packages that dependees on "$i"package in and print "dependees-on" files in SlackBuild folder
+# After all you can use it as local repo or upload it as public if you can maintain it...
 # In that case you should run this script minimum ones per week to update it. 
-# Written by Anagnostakis Ioannis GR Crete <rizitis@gmail.com>
 # LICENCE https://raw.githubusercontent.com/rizitis/sqf2dep/main/LICENSE
 # Take the idea of script and make it better...
 
@@ -11,6 +12,7 @@ if [ "$EUID" -ne 0 ];then
 echo "ROOT ACCESS PLEASE OR GO HOME..."
 exit 1
 fi
+
 
 #*************************************************************************************************************************
 # If you want to use ponce repo for Slackware-current, (I did it for this script), then create a file (or edit if exist) *
@@ -24,8 +26,9 @@ fi
 sbopkg -r || exit
 # create for all packages that need deps a package.sqf file
 sqg -a
+rm /var/lib/sbopkg/queues/Mumble*
 # update local Slackware system database
-updatedb
+/usr/bin/updatedb
 
 # create package.dep and slack-required files
 dir=/tmp/sqf2dep
@@ -44,17 +47,51 @@ done
 repo=/tmp/slackbuilds-current
 cd /tmp || exit
 rm current.zip*
-mv $repo $repo.BAK
+rm -r $repo
 # for stable replace github url and unzip command...
 wget https://github.com/Ponce/slackbuilds/archive/refs/heads/current.zip
 unzip current.zip
 # Not needed any more
-rm current.zip slackbuilds-current/README slackbuilds-current/ChangeLog.txt
+rm current.zip slackbuilds-current/ChangeLog.txt slackbuilds-current/README
 cd $repo || exit
-# copy paste .dep and slack-required files to the correct repo folders
+# copy paste .dep and slack-required files to the correct repo folders but not the empty files.
 for i in `ls /tmp/sqf2dep/`; do
-cp /tmp/sqf2dep/"$i"/slack-required $repo/*/"$i"/
-cp /tmp/sqf2dep/"$i"/"$i".dep $repo/*/"$i"/
+if [[ -s "/tmp/sqf2dep/"$i"/slack-required" ]]
+then
+  cp /tmp/sqf2dep/"$i"/slack-required $repo/*/"$i"/
+  cp /tmp/sqf2dep/"$i"/"$i".dep $repo/*/"$i"/
+fi
+done
+
+#***********************************************************************#
+#* slpkg time now. Make sure you have /etc/slpkg/slpkg.toml like this: *#
+#* PONCE_REPO = true                                                   *#
+#* COLORS = false                                                      *#
+#* ASCII_CHARACTERS = false                                            *#
+#***********************************************************************#
+#NUMJOBS=${NUMJOBS:-" -j$(expr $(nproc) + 1) "}
+slpkg -yP update
+# slpkg will find and print the packages that dependees on "$i"package
+repo=/tmp/slackbuilds-current
+dir=/tmp/sqf2dep
+cd $repo || exit
+for i in `ls /tmp/sqf2dep`; do 
+slpkg -e $i >> $dir/"$i"/dependees-on
+# remove last line
+sed -i '$d' $dir/"$i"/dependees-on
+# remove 3 first lines
+sed -i '1,3d' $dir/"$i"/dependees-on
+# remove the specific character (+=)
+sed -i 's/+=//' $dir/"$i"/dependees-on
+# delete lines starting with 
+sed -i '/^No/d' $dir/"$i"/dependees-on
+# remove empty lines
+sed -i '/^[[:space:]]*$/d' $dir/"$i"/dependees-on
+if [ ! -s $dir/"$i"/dependees-on ] ; then
+  rm $dir/"$i"/dependees-on
+fi
+# copy paste dependees-on to the correct repo folders
+rsync  --inplace /tmp/sqf2dep/"$i"/dependees-on $repo/*/"$i"/
 done
 
 # Make new SLACKBUILDS.TXT using @bassmadrigal script https://www.linuxquestions.org/questions/slackware-14/script-for-building-a-slackbuilds-txt-4175598436/#post5661600
@@ -65,7 +102,12 @@ chmod +x create-SLACKBUILDS_TXT
 bash create-SLACKBUILDS_TXT > SLACKBUILDS.TXT
 rm create-SLACKBUILDS_TXT*
 echo "YOUR LOCAL REPO IS READY. IF YOU WANT TO UPLOAD IT AS A PUPLIC REPO, "
-echo "PLEASE CREATE A ChangeLog.txt file and a README"
+echo "PLEASE CREATE A NEW ChangeLog.txt file and README"
+echo "If you want to create a binary repo from these SlackBuilds you must edit every packages.SlackBuild"
+echo "and put at least package.dep file in the installation... "
+echo "If your package manager resolving deps then 'dependees-on' file might be useful too..."
+echo "specially when and if you upgradepkg/removepkg package"
+echo " your pm may inform you which packages dependees on removable package ;) "
 echo
 sleep 3
 
