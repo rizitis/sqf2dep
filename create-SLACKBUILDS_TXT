@@ -8,7 +8,7 @@ for i in */*; do
   NAME=$(echo $i | cut -d "/" -f2)
   FILES=$(ls $i)
   source $i/${NAME}.info
-  DEPON=$(cat $NAME $i/dependees-on)
+  DEPON=$(cat $i/dependees-on)
   SHORTDES=$(grep -m 1 $NAME $i/slack-desc | cut -d " " -f2-)
   echo SLACKBUILD NAME: $NAME 
   echo SLACKBUILD LOCATION: $i
