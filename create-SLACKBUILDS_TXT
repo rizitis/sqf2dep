@@ -8,7 +8,7 @@ for i in */*; do
   NAME=$(echo $i | cut -d "/" -f2)
   FILES=$(ls $i)
   source $i/${NAME}.info
-  DEPON=$(cat $i/dependees-on)
+  DEPSON=$(cat $i/dependees-on)
   SHORTDES=$(grep -m 1 $NAME $i/slack-desc | cut -d " " -f2-)
   echo SLACKBUILD NAME: $NAME 
   echo SLACKBUILD LOCATION: $i
@@ -19,7 +19,7 @@ for i in */*; do
   echo SLACKBUILD MD5SUM: $MD5SUM 
   echo SLACKBUILD MD5SUM_x86_64: $MD5SUM_x86_64 
   echo SLACKBUILD REQUIRES: $REQUIRES 
-  echo PACKAGES DEPENDEES-ON: $DEPON
+  echo PACKAGES DEPENDEES-ON: $DEPSON
   echo SLACKBUILD SHORT DESCRIPTION: $SHORTDES 
   echo 
 done
