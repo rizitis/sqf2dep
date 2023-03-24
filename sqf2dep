@@ -1,8 +1,12 @@
 #!/bin/bash
 
 # Written by Anagnostakis Ioannis GR Crete <rizitis@gmail.com> 03/2023
-# This sqf2dep script can fork SBo repo and create package.dep and slack-required files if your package-manager need them...
-# Also will find for you the packages that dependees on "$i"package in and print "dependees-on" files in SlackBuild folder
+# This sqf2dep script will do:
+# A fork SBo-ponce repo, create package.dep and slack-required files if your package-manager need them...
+# Also it will find which packages  dependees on package.txz in and print "dependees-on" files in SlackBuild folder
+# Finally it will edit all SlackBuilds scripts to include these files in the installation and if dep file exist you can find 
+# in /tmp with the package binary... If not package.dep file not needed, then terminal will show as "error" at the end of SlackBuild
+# "cant cp package.dep file NOT such file"
 # After all you can use it as local repo or upload it as public if you can maintain it...
 # In that case you should run this script minimum ones per week to update it. 
 # LICENCE https://raw.githubusercontent.com/rizitis/sqf2dep/main/LICENSE
@@ -13,7 +17,7 @@ echo "ROOT ACCESS PLEASE OR GO HOME..."
 exit 1
 fi
 
-NUMJOBS=${NUMJOBS:-" -j$(expr $(nproc) + 1) "}
+
 #*************************************************************************************************************************
 # If you want to use ponce repo for Slackware-current, (I did it for this script), then create a file (or edit if exist) *
 # /root/.sbopkg.conf                                                                                                     *
@@ -33,7 +37,7 @@ rm /var/lib/sbopkg/queues/Mumble*
 # create package.dep and slack-required files
 dir=/tmp/sqf2dep
 rm -r $dir
-for i in `ls /var/lib/sbopkg/queues/`; do
+for i in $(ls /var/lib/sbopkg/queues/); do
 mkdir -p $dir || exit
 mkdir -p $dir/"$i" || exit
 cat /var/lib/sbopkg/queues/"$i" > $dir/"$i"/"$i"
@@ -48,14 +52,13 @@ repo=/tmp/slackbuilds-current
 cd /tmp || exit
 rm current.zip*
 rm -r $repo
-# for stable replace github url and unzip command...
 wget https://github.com/Ponce/slackbuilds/archive/refs/heads/current.zip
 unzip current.zip
 # Not needed any more
-rm current.zip slackbuilds-current/ChangeLog.txt slackbuilds-current/README
+rm current.zip 
 cd $repo || exit
-# copy paste .dep and slack-required files to the correct repo folders but not the empty files.
-for i in `ls /tmp/sqf2dep/`; do
+# copy paste .dep and slack-required files to the correct repo folders.
+for i in $(ls /tmp/sqf2dep/); do
 if [[ -s "/tmp/sqf2dep/"$i"/slack-required" ]]
 then
   cp /tmp/sqf2dep/"$i"/slack-required $repo/*/"$i"/
@@ -75,8 +78,8 @@ slpkg -yP update
 repo=/tmp/slackbuilds-current
 dir=/tmp/sqf2dep
 cd $repo || exit
-for i in `ls /tmp/sqf2dep`; do 
-slpkg -e $i >> $dir/"$i"/dependees-on
+for i in $(ls /tmp/sqf2dep); do 
+slpkg -e "$i" >> $dir/"$i"/dependees-on
 # remove last line
 sed -i '$d' $dir/"$i"/dependees-on
 sed -i '$d' $dir/"$i"/dependees-on
@@ -84,12 +87,12 @@ sed -i '$d' $dir/"$i"/dependees-on
 sed -i '1,3d' $dir/"$i"/dependees-on
 # remove the specific character (+=)
 sed -i 's/+=//' $dir/"$i"/dependees-on
-# delete lines starting with 
-sed -i '/^No/d' $dir/"$i"/dependees-on
 # remove empty lines
 sed -i '/^[[:space:]]*$/d' $dir/"$i"/dependees-on
 # remove tabs,spaces etc...
 sed -i 's/^[ \t]*//' $dir/"$i"/dependees-on
+wait
+sed -i 's/No dependees//g' $dir/"$i"/dependees-on
 wait
 if [ ! -s $dir/"$i"/dependees-on ] ; then
   rm $dir/"$i"/dependees-on
@@ -97,6 +100,32 @@ fi
 # copy paste dependees-on to the correct repo folders
 rsync  --inplace /tmp/sqf2dep/"$i"/dependees-on $repo/*/"$i"/
 done
+
+# time to patch SlackBuilds script ;) 
+
+repo=/tmp/slackbuilds-current
+dir=/tmp/sqf2dep
+repo=/tmp/slackbuilds-current
+file=$repo/*/$i/
+pattern='cd $PKG'
+line='if [ -f $CWD\/slack-required ]; then cat $CWD\/slack-required > $PKG\/install\/slack-required; fi'
+line2='if [ -f $CWD\/dependees-on ]; then cat $CWD\/dependees-on > $PKG\/install\/dependees-on; fi'
+#line3='if [ -f $CWD\/$PRGNAM.dep ]; then cp $CWD\/$PRGNAM.dep  $OUTPUT\/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.dep; fi'
+cd $repo || exit 
+
+shopt -s nullglob 
+
+if [ ${#file[@]} -gt 0 ]
+then 
+find . -name "*.SlackBuild" -exec sed -i "s/$pattern/$line\n$pattern/g" {} \; 
+wait
+find . -name "*.SlackBuild" -exec sed -i "s/$pattern/$line2\n$pattern/g" {} \; 
+wait
+#find . -name "*.SlackBuild" -exec sed -i "s/$pattern/$line3\n$pattern/g" {} \;
+find . -name  "*.SlackBuild" -exec sed -i -e '$acp $CWD/$PRGNAM.dep  $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.dep' {} \;
+else 
+echo "Oh my God, epic fail again..."
+fi 
 
 # Make new SLACKBUILDS.TXT using @bassmadrigal script https://www.linuxquestions.org/questions/slackware-14/script-for-building-a-slackbuilds-txt-4175598436/#post5661600
 repo=/tmp/slackbuilds-current 
@@ -107,16 +136,11 @@ bash create-SLACKBUILDS_TXT > SLACKBUILDS.TXT
 wait
 rm create-SLACKBUILDS_TXT*
 
-
-echo "sqf2dep:"
-echo "YOUR LOCAL REPO IS READY. IF YOU WANT TO UPLOAD IT AS A PUPLIC REPO, "
-echo "PLEASE CREATE A NEW ChangeLog.txt file and README"
-echo "If you want to create a binary repo from these SlackBuilds you must edit every packages.SlackBuild"
-echo "and put at least package.dep file in the installation... "
-echo "If your package manager resolving deps then 'dependees-on' file might be useful too..."
-echo "specially when and if you upgradepkg/removepkg package"
-echo "for example, your pm may inform you which packages dependees on removable package ;) "
-echo
+slpkg -yi sl 
+/usr/games/sl
+wait
+echo "End of script"
+echo "CU next time..."
 sleep 3
 
 exit
