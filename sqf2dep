@@ -1,12 +1,8 @@
 #!/bin/bash
 
 # Written by Anagnostakis Ioannis GR Crete <rizitis@gmail.com> 03/2023
-# This sqf2dep script will do:
-# A fork SBo-ponce repo, create package.dep and slack-required files if your package-manager need them...
-# Also it will find which packages  dependees on package.txz in and print "dependees-on" files in SlackBuild folder
-# Finally it will edit all SlackBuilds scripts to include these files in the installation and if dep file exist you can find 
-# in /tmp with the package binary... If not package.dep file not needed, then terminal will show as "error" at the end of SlackBuild
-# "cant cp package.dep file NOT such file"
+# This sqf2dep script can fork SBo repo and create package.dep and slack-required files if your package-manager need them...
+# Also will find for you the packages that dependees on "$i"package in and print "dependees-on" files in SlackBuild folder
 # After all you can use it as local repo or upload it as public if you can maintain it...
 # In that case you should run this script minimum ones per week to update it. 
 # LICENCE https://raw.githubusercontent.com/rizitis/sqf2dep/main/LICENSE
@@ -57,7 +53,7 @@ unzip current.zip
 # Not needed any more
 rm current.zip 
 cd $repo || exit
-# copy paste .dep and slack-required files to the correct repo folders.
+# copy paste .dep and slack-required files to the correct repo folders but not the empty files.
 for i in $(ls /tmp/sqf2dep/); do
 if [[ -s "/tmp/sqf2dep/"$i"/slack-required" ]]
 then
@@ -101,8 +97,8 @@ fi
 rsync  --inplace /tmp/sqf2dep/"$i"/dependees-on $repo/*/"$i"/
 done
 
-# time to patch SlackBuilds script ;) 
-
+# time to patch SlackBuild script 
+# if needed ...not all of them  ;)
 repo=/tmp/slackbuilds-current
 dir=/tmp/sqf2dep
 repo=/tmp/slackbuilds-current
@@ -110,19 +106,22 @@ file=$repo/*/$i/
 pattern='cd $PKG'
 line='if [ -f $CWD\/slack-required ]; then cat $CWD\/slack-required > $PKG\/install\/slack-required; fi'
 line2='if [ -f $CWD\/dependees-on ]; then cat $CWD\/dependees-on > $PKG\/install\/dependees-on; fi'
-#line3='if [ -f $CWD\/$PRGNAM.dep ]; then cp $CWD\/$PRGNAM.dep  $OUTPUT\/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.dep; fi'
+pattern2='cp $CWD\/$PRGNAM.dep  $OUTPUT\/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.dep'
+line3='set +e'
 cd $repo || exit 
 
 shopt -s nullglob 
 
 if [ ${#file[@]} -gt 0 ]
 then 
+find . -name  "*.SlackBuild" -exec sed -i -e '$acp $CWD/$PRGNAM.dep  $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.dep' {} \;
+wait
 find . -name "*.SlackBuild" -exec sed -i "s/$pattern/$line\n$pattern/g" {} \; 
 wait
 find . -name "*.SlackBuild" -exec sed -i "s/$pattern/$line2\n$pattern/g" {} \; 
 wait
-#find . -name "*.SlackBuild" -exec sed -i "s/$pattern/$line3\n$pattern/g" {} \;
-find . -name  "*.SlackBuild" -exec sed -i -e '$acp $CWD/$PRGNAM.dep  $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.dep' {} \;
+find ./ -name "*.SlackBuild" -exec sed -i "s/$pattern2/$line3\n$pattern/g" {} \;
+wait
 else 
 echo "Oh my God, epic fail again..."
 fi 
