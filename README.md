@@ -35,10 +35,10 @@ Ones per week you should run sqf2dep to update your repo.
 ## TIPS
 slack-required files are used in build directories as alternatives to package.info files
 
-You already have package.dep files in case you want to build and provide a binaries repo just add them in slackbuilds...
+You already have package.dep files in case you want to build and provide a binaries repo from these slackbuilds...
 
-dependees-on files is something new, if you want to removepkg then from there you can see if other packages dependees on this file.
-A binary package-manager exept of .dep files it will be useful to read  dependees-on files and inform user if other packagese dependeed on package before proceed to unistall.
+dependees-on files is something new, shows packages that dependees on this package.
+A binary package-manager exept of .dep files it will be useful to read  dependees-on files and inform user if other packages depending on this package before proceed to unistall or upgrade...
  
 
 Enjoy! and make sqf2dep script better.
