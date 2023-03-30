@@ -106,21 +106,18 @@ file=$repo/*/$i/
 pattern='cd $PKG'
 line='if [ -f $CWD\/slack-required ]; then cat $CWD\/slack-required > $PKG\/install\/slack-required; fi'
 line2='if [ -f $CWD\/dependees-on ]; then cat $CWD\/dependees-on > $PKG\/install\/dependees-on; fi'
-pattern2='cp $CWD\/$PRGNAM.dep  $OUTPUT\/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.dep'
-line3='set +e'
+line3='if [ -f $CWD\/$PRGNAM.dep ]; then cp $CWD\/$PRGNAM.dep  $OUTPUT\/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.dep; fi'
 cd $repo || exit 
 
 shopt -s nullglob 
 
 if [ ${#file[@]} -gt 0 ]
 then 
-find . -name  "*.SlackBuild" -exec sed -i -e '$acp $CWD/$PRGNAM.dep  $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.dep' {} \;
-wait
 find . -name "*.SlackBuild" -exec sed -i "s/$pattern/$line\n$pattern/g" {} \; 
 wait
 find . -name "*.SlackBuild" -exec sed -i "s/$pattern/$line2\n$pattern/g" {} \; 
 wait
-find ./ -name "*.SlackBuild" -exec sed -i "s/$pattern2/$line3\n$pattern/g" {} \;
+find . -name "*.SlackBuild" -exec sed -i "s/$pattern/$line3\n$pattern/g" {} \;
 wait
 else 
 echo "Oh my God, epic fail again..."
