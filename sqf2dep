@@ -64,9 +64,10 @@ done
 
 #***********************************************************************#
 #* slpkg time now. Make sure you have /etc/slpkg/slpkg.toml like this: *#
-#* PONCE_REPO = true                                                   *#
 #* COLORS = false                                                      *#
 #* ASCII_CHARACTERS = false                                            *#
+#* AND /etc/slpkg/repositories.toml                                    *# 
+#* PONCE_REPO = true                                                   *#
 #***********************************************************************#
 
 slpkg -yP update
@@ -98,7 +99,7 @@ rsync  --inplace /tmp/sqf2dep/"$i"/dependees-on $repo/*/"$i"/
 done
 
 # time to patch SlackBuild script 
-# if needed ...not all of them  ;)
+
 repo=/tmp/slackbuilds-current
 dir=/tmp/sqf2dep
 repo=/tmp/slackbuilds-current
