@@ -3,7 +3,9 @@
 # @bassmadrigal`s script https://www.linuxquestions.org/questions/slackware-14/script-for-building-a-slackbuilds-txt-4175598436/#post5661600
 # 03/2023 I added "PACKAGES DEPENDEES-ON", you can modify it for your needs...
 # 
-
+echo "$(date "+%d/%m/%Y-%T")"
+echo
+echo
 for i in */*; do
   NAME=$(echo $i | cut -d "/" -f2)
   FILES=$(ls $i)
