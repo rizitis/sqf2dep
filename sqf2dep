@@ -8,12 +8,16 @@
 # LICENCE https://raw.githubusercontent.com/rizitis/sqf2dep/main/LICENSE
 # Take the idea of script and make it better...
 
+# run script like this:
+# nice -n -20 bash /path/to/script
+# replace -20 with the number of cores you want to use ;)
+
 if [ "$EUID" -ne 0 ];then
 echo "ROOT ACCESS PLEASE OR GO HOME..."
 exit 1
 fi
 
-
+start_time=$(date +%s)
 #*************************************************************************************************************************
 # If you want to use ponce repo for Slackware-current, (I did it for this script), then create a file (or edit if exist) *
 # /root/.sbopkg.conf                                                                                                     *
@@ -42,7 +46,26 @@ cd $dir || exit
 rename 'sqf' 'dep' "$i"/*.sqf
 rename '.sqf' '' "$i"
 done
-
+# create dependees-on 
+cd $dir || exit
+# Loop through all the directories in the current directory
+for dirpath in */; do
+    # Check if the slack-required file exists in the current directory
+    if [ -f "$dirpath/slack-required" ]; then
+        # Read the package names from the slack-required file
+        package_names=$(cat "$dirpath/slack-required")
+        
+        # Loop through the package names and find the corresponding folders
+        for package_name in $package_names; do
+            for sub_dirpath in ./*; do
+                if [ -d "$sub_dirpath" ] && [[ "$sub_dirpath" == *"$package_name"* ]]; then
+                    # Write the folder name to the dependees-on file
+                    echo "${dirpath%/}" >> "$sub_dirpath/dependees-on"
+                fi
+            done
+        done
+    fi
+done
 # Here I focuss to ponce repo , for the Slackware-stable slackbuilds repo following commands need a lot of edits...
 repo=/tmp/slackbuilds-current
 cd /tmp || exit
@@ -53,52 +76,18 @@ unzip current.zip
 # Not needed any more
 rm current.zip 
 cd $repo || exit
-# copy paste .dep and slack-required files to the correct repo folders but not the empty files.
+# copy paste .dep and slack-required and dependees-on files to correct repo folders.
 for i in $(ls /tmp/sqf2dep/); do
 if [[ -s "/tmp/sqf2dep/"$i"/slack-required" ]]
 then
+  cp /tmp/sqf2dep/"$i"/dependees-on $repo/*/"$i"/
   cp /tmp/sqf2dep/"$i"/slack-required $repo/*/"$i"/
   cp /tmp/sqf2dep/"$i"/"$i".dep $repo/*/"$i"/
 fi
 done
 
-#***********************************************************************#
-#* slpkg time now. Make sure you have /etc/slpkg/slpkg.toml like this: *#
-#* COLORS = false                                                      *#
-#* ASCII_CHARACTERS = false                                            *#
-#* AND /etc/slpkg/repositories.toml                                    *# 
-#* PONCE_REPO = true                                                   *#
-#***********************************************************************#
 
-slpkg -yP update
-# slpkg will find and print the packages that dependees on "$i"package
-repo=/tmp/slackbuilds-current
-dir=/tmp/sqf2dep
-cd $repo || exit
-for i in $(ls /tmp/sqf2dep); do 
-slpkg -e "$i" >> $dir/"$i"/dependees-on
-# remove last line
-sed -i '$d' $dir/"$i"/dependees-on
-sed -i '$d' $dir/"$i"/dependees-on
-# remove 3 first lines
-sed -i '1,3d' $dir/"$i"/dependees-on
-# remove the specific character (+=)
-sed -i 's/+=//' $dir/"$i"/dependees-on
-# remove empty lines
-sed -i '/^[[:space:]]*$/d' $dir/"$i"/dependees-on
-# remove tabs,spaces etc...
-sed -i 's/^[ \t]*//' $dir/"$i"/dependees-on
-wait
-sed -i 's/No dependees//g' $dir/"$i"/dependees-on
-wait
-if [ ! -s $dir/"$i"/dependees-on ] ; then
-  rm $dir/"$i"/dependees-on
-fi
-# copy paste dependees-on to the correct repo folders
-rsync  --inplace /tmp/sqf2dep/"$i"/dependees-on $repo/*/"$i"/
-done
 
-# time to patch SlackBuild script 
 
 repo=/tmp/slackbuilds-current
 dir=/tmp/sqf2dep
@@ -112,13 +101,14 @@ cd $repo || exit
 
 shopt -s nullglob 
 
+
 if [ ${#file[@]} -gt 0 ]
 then 
 find . -name "*.SlackBuild" -exec sed -i "s/$pattern/$line\n$pattern/g" {} \; 
 wait
 find . -name "*.SlackBuild" -exec sed -i "s/$pattern/$line2\n$pattern/g" {} \; 
 wait
-find . -name "*.SlackBuild" -exec sed -i "s/$pattern/$line3\n$pattern/g" {} \;
+find . -name  "*.SlackBuild" -exec sed -i -e '$aif [ -f $CWD\/$PRGNAM.dep ]; then cp $CWD\/$PRGNAM.dep  $OUTPUT\/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.dep; fi' {} \;
 wait
 else 
 echo "Oh my God, epic fail again..."
@@ -133,11 +123,10 @@ bash create-SLACKBUILDS_TXT > SLACKBUILDS.TXT
 wait
 rm create-SLACKBUILDS_TXT*
 
-slpkg -yi sl 
-/usr/games/sl
-wait
-echo "End of script"
-echo "CU next time..."
-sleep 3
+end_time=$(date +%s)
 
-exit
+elapsed_time=$(($end_time - $start_time))
+
+echo ""
+echo ""
+echo "Elapsed time: $elapsed_time seconds"
