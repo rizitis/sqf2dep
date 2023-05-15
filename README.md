@@ -1,5 +1,14 @@
+# NOTE 
+ I re-write sqf2dep
+slpkg removed from script because after latest change in slpkg 4.8.3 version, script was not running properly, Also slpkg needed a lot of time for updated db for ponce and create depeendes-on for all files.
+Now we are doing this job in the script and  1 hour script running time saved!
+Now script needs only 17 minutes to finish...
+But slpkg and its depeendes-on option was the reason for all these here... 
+SO! Thank you dimitris for your amazing package manager ;)
+
 ```
-slpkg-4.8.3 is not working with this repo. For now the solution is slpkg = 4.8.2
+older version which using slpkg-4.8.2 
+https://github.com/rizitis/sqf2dep/tree/sqf2deb-slpkg-4.8.2
 ```
 # sqf2dep
 With sqf2dep you can download and edit ponce SlackBuilds repo. 
@@ -9,11 +18,10 @@ edited with slack-required, package.dep and dependees-on files also included if 
 Also a SLACKBUILDS.TXT will be there for your package-manager...
 
 ## required:
-sbopkg and slpkg
+sbopkg
 
 ## HOWTO
-Install sbopkg and synchronize it to ponce repo. READ how inside script if you dont know.
-Install slpkg and synchronize it to ponce repo. READ how inside script if you dont know.
+Install sbopkg and synchronize it to ponce repo. READ howto inside script if you dont know.
 
 Then download sqf2dep 
 ```
@@ -28,9 +36,10 @@ Finally run it as root  and wait some time until finish. Need about 60 minutes t
 ```
 ./sqf2dep
 ```
+Wait 17-20 minute...
 Now you have a fork of ponce repo as discribed in first lines.
 
-You can use it as local repo or if you want then maintain it as puplic repo and enjoy your Slackware-based distro or your package-manager in Slackware-current.
+You can use it as local repo or if you want to maintain it as puplic repo and enjoy your Slackware-based distro or your package-manager in Slackware-current.
 If you want to use it as puplic repo, first create a ChangeLog.txt etc.. (alienbob have great scripts for these) and a README.
 
 Ones per week you should run sqf2dep to update your repo.
