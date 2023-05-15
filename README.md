@@ -1,3 +1,6 @@
+```
+slpkg-4.8.3 is not working with this repo. For now the solution is slpkg = 4.8.2
+```
 # sqf2dep
 With sqf2dep you can download and edit ponce SlackBuilds repo. 
 When script finish you will have in /tmp/slackware-current a fork of ponce SlackBuilds repo
