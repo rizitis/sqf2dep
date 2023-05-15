@@ -1,8 +1,11 @@
 # NOTE 
  I re-write sqf2dep
-slpkg removed from script because after latest change in slpkg 4.8.3 version, script was not running properly, Also slpkg needed a lot of time for updated db for ponce and create depeendes-on for all files.
-Now we are doing this job in the script and  1 hour script running time saved!
+slpkg removed from script, because after latest change in slpkg 4.8.3 version, script was not running properly.
+
+Also slpkg needed a lot of time for updated db ponce repo and create depeendes-on for all files.
+Its better doing this job in the bash script so  1 hour script running time saved!
 Now script needs only 17 minutes to finish...
+
 But slpkg and its depeendes-on option was the reason for all these here... 
 SO! Thank you dimitris for your amazing package manager ;)
 
