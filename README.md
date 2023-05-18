@@ -52,7 +52,12 @@ slack-required files are used in build directories as alternatives to package.in
 
 You already have package.dep files in case you want to build and provide a binaries repo from these slackbuilds...
 
-dependees-on files is something new, shows packages that dependees on this package.
+### NOTES
+dependees-on files is something new, slpkg was the first Slackware package manager which 
+provided this option and shows packages that dependees on this package.
+BUT now that sqf2deb is not using slpkg the only way for me to still support this option in the bash script is to also print files that dependees-on the dependees-on files... 
+
+
 A binary package-manager exept of .dep files it will be useful to read  dependees-on files and inform user if other packages depending on this package before proceed to unistall or upgrade...
  
 
