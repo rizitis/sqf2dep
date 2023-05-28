@@ -1,9 +1,9 @@
 # NOTE 
- I re-write sqf2dep
-slpkg removed from script, because after latest change in slpkg 4.8.3 version, script was not running properly.
+ I re-write sqf2dep.
+slpkg is removed from script, because after latest change in slpkg 4.8.3 version, script was not running properly.
 
-Also slpkg needed a lot of time for updated db ponce repo and create depeendes-on for all files.
-Its better doing this job in the bash script so  1 hour script running time saved!
+Also with slpkg needed a lot of time for updated db for ponce repo and create depeendes-on for all files.
+Its better doing this job in the bash script using bash commands, bash is faster from python3 we save one hour time...!
 Now script needs only 17 minutes to finish...
 
 But slpkg and its depeendes-on option was the reason for all these here... 
