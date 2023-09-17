@@ -19,14 +19,13 @@ process_build_script() {
     BUILD=$(awk -F= '/^BUILD=/{print $2}' "$build_script")
     TAG=$(awk -F= '/^TAG=/{print $2}' "$build_script")
     PKGTYPE=$(awk -F= '/^PKGTYPE=/{print $2}' "$build_script")
-
+   
 
     echo "PRGNAM: $PRGNAM" >> "$OUTPUT_FILE"
     echo "VERSION: $VERSION" >> "$OUTPUT_FILE"
     echo "BUILD: $BUILD" >> "$OUTPUT_FILE"
     echo "TAG: $TAG" >> "$OUTPUT_FILE"
     echo "PKGTYPE: $PKGTYPE" >> "$OUTPUT_FILE"
-
     echo "" >> "$OUTPUT_FILE" 
 }
 
@@ -41,8 +40,9 @@ process_directory() {
             process_build_script "$slackbuild_file"
         fi
     done
-    echo "INFO: $(cat $directory/$PRGNAM.info)" >> "$OUTPUT_FILE"
-    
+    echo "INFO:" >> "$OUTPUT_FILE"
+    cat "$directory/$PRGNAM.info" >> "$OUTPUT_FILE"
+    echo " " >> "$OUTPUT_FILE"
     
     
     for subdir in "$directory"/*; do
