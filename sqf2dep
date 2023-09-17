@@ -118,11 +118,16 @@ fi
 # Make new SLACKBUILDS.TXT using @bassmadrigal script https://www.linuxquestions.org/questions/slackware-14/script-for-building-a-slackbuilds-txt-4175598436/#post5661600
 repo=/tmp/slackbuilds-current 
 cd $repo || exit
-wget https://raw.githubusercontent.com/rizitis/sqf2dep/main/create-SLACKBUILDS_TXT
+wget -c https://raw.githubusercontent.com/rizitis/sqf2dep/main/create-SLACKBUILDS_TXT
 chmod +x create-SLACKBUILDS_TXT
 bash create-SLACKBUILDS_TXT > SLACKBUILDS.TXT
 wait
 rm create-SLACKBUILDS_TXT*
+# create BUILDS.TXT
+wget -c https://raw.githubusercontent.com/rizitis/sqf2dep/main/BUILDS.bash
+chmod +x BUILDS.bash
+bash BUILDS.bash
+rm BUILDS.bash
 
 end_time=$(date +%s)
 
