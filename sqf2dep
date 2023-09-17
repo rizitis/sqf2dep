@@ -108,7 +108,8 @@ find . -name "*.SlackBuild" -exec sed -i "s/$pattern/$line\n$pattern/g" {} \;
 wait
 find . -name "*.SlackBuild" -exec sed -i "s/$pattern/$line2\n$pattern/g" {} \; 
 wait
-find . -name  "*.SlackBuild" -exec sed -i -e '$aif [ -f $CWD\/$PRGNAM.dep ]; then cp $CWD\/$PRGNAM.dep  $OUTPUT\/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.dep; fi' {} \;
+#find . -name  "*.SlackBuild" -exec sed -i -e '$aif [ -f $CWD\/$PRGNAM.dep ]; then cp $CWD\/$PRGNAM.dep  $OUTPUT\/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.dep; fi' {} \;
+find . -name  "*.SlackBuild" -exec sed -i -e '$aif [ -f $CWD\/slack-required ]; then cp $CWD\/slack-required  $OUTPUT\/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.dep; fi' {} \;
 wait
 else 
 echo "Oh my God, epic fail again..."
