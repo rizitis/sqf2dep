@@ -10,7 +10,7 @@ OUTPUT_FILE="BUILDS.TXT"
 
 date +"%H:%M:%S %d-%m-%y" >> "$OUTPUT_FILE"
 echo "" >> "$OUTPUT_FILE"
-
+echo "REPOTAG=SBo" >> "$OUTPUT_FILE"
 process_build_script() {
     local build_script="$1"
     
@@ -45,7 +45,7 @@ process_directory() {
             fi
   done  
     
-    echo "INFO:" >> "$OUTPUT_FILE"
+    echo "$PRGNAM-INFO:" >> "$OUTPUT_FILE"
     cat "$directory/$PRGNAM.info" >> "$OUTPUT_FILE"
     echo " " >> "$OUTPUT_FILE"
     
