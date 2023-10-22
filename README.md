@@ -35,7 +35,7 @@ Make it executable
 chmod +x sqf2dep
 ```
 
-Finally run it as root  and wait some time until finish. Need about 60 minutes to finish.
+Finally run it as root  and wait some time until finish. Need about 20 minutes to finish.
 ```
 ./sqf2dep
 ```
