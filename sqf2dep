@@ -87,9 +87,6 @@ fi
 done
 
 
-
-
-repo=/tmp/slackbuilds-current
 dir=/tmp/sqf2dep
 repo=/tmp/slackbuilds-current
 file=$repo/*/$i/
@@ -115,6 +112,28 @@ else
 echo "Oh my God, epic fail again..."
 fi 
 
+# fix slack-required, some packages have as dep it self :\ #
+cd $repo || exit 
+
+# step1: Save the original directory
+original_dir="$repo"
+
+# step2: Find subdirectories with a slack-required file
+for folder in */*/; do
+  if [ -f "$folder/slack-required" ]; then
+    echo "Entering directory: $folder"
+    cd "$folder"
+    
+# step3: Get the basename of the current directory
+    dir_name="$(basename "$(pwd)")"
+    
+# step4: finger cross... Perform the sed operation
+    sed -i "s/$dir_name//g" slack-required
+    
+# step5: Return to the original directory and keep going...
+    cd "$original_dir"
+  fi
+done
 # Make new SLACKBUILDS.TXT using @bassmadrigal script https://www.linuxquestions.org/questions/slackware-14/script-for-building-a-slackbuilds-txt-4175598436/#post5661600
 repo=/tmp/slackbuilds-current 
 cd $repo || exit
