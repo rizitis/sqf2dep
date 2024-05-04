@@ -115,24 +115,19 @@ fi
 # fix slack-required, some packages have as dep it self :\ #
 cd $repo || exit 
 
-# step1: Save the original directory
-original_dir="$repo"
-
-# step2: Find subdirectories with a slack-required file
-for folder in */*/; do
-  if [ -f "$folder/slack-required" ]; then
-    echo "Entering directory: $folder"
-    cd "$folder"
-    
-# step3: Get the basename of the current directory
-    dir_name="$(basename "$(pwd)")"
-    
-# step4: finger cross... Perform the sed operation
-    sed -i "s/$dir_name//g" slack-required
-    
-# step5: Return to the original directory and keep going...
-    cd "$original_dir"
-  fi
+# Step 1: Find all folders recursively
+find ./ -type d | while read dir; do
+    # Step 2: Check if 'slack-required' file exists in the folder
+    slack_required_file="$dir/slack-required"
+    if [[ -f "$slack_required_file" ]]; then
+        # Step 3: Get the name of the folder (without leading './')
+        folder_name=$(basename "$dir")
+        
+        # Step 4: Remove lines in 'slack-required' containing the folder's name
+        sed -i "/$folder_name/d" "$slack_required_file"
+        
+        echo "Removed lines containing '$folder_name' from '$slack_required_file'"
+    fi
 done
 # Make new SLACKBUILDS.TXT using @bassmadrigal script https://www.linuxquestions.org/questions/slackware-14/script-for-building-a-slackbuilds-txt-4175598436/#post5661600
 repo=/tmp/slackbuilds-current 
