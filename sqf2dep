@@ -146,10 +146,10 @@ rm -r misc/recode || true
 cp -R "$CWD"/recode "$repo"/misc/ || exit 20
 
 rm -r desktop/yad || true
-cp -R yad "$repo"/desktop/ exit 30
+cp -R "$CWD"/yad "$repo"/desktop/ || exit 30
 
 rm -r graphics/yed || true
-cp -R yed "$repo"/graphics/ || exit 40
+cp -R "$CWD"/yed "$repo"/graphics/ || exit 40
 
 # Prepare SLACKBUILDS.TXT
 if [ ! -f "$CWD"/create-SLACKBUILDS_TXT ]; then
