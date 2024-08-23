@@ -139,17 +139,31 @@ repo=/tmp/slackbuilds-current
 cd $repo || exit
 
 # First add - replace patched folders ..
-rm -r system/{iotop,ktsuss} || true
-cp -R "$CWD"/{iotop,ktsuss} "$repo"/system/ || exit 10
+if [ -d "$CWD"/iotop ]; then
+   rm -r system/iotop || true
+   cp -R "$CWD"/iotop "$repo"/system/ || exit 10
+fi
 
-rm -r misc/recode || true
-cp -R "$CWD"/recode "$repo"/misc/ || exit 20
+if [ -d "$CWD"/ktsuss ]; then
+   rm -r system/ktsuss || true
+   cp -R "$CWD"/ktsuss "$repo"/system/ || exit 20
+fi
 
-rm -r desktop/yad || true
-cp -R "$CWD"/yad "$repo"/desktop/ || exit 30
+if [ -d "$CWD"/recode ]; then
+   rm -r misc/recode || true
+   cp -R "$CWD"/recode "$repo"/misc/ || exit 30
+fi
 
+if [ -d "$CWD"/yad ]; then
+   rm -r desktop/yad || true
+   cp -R "$CWD"/yad "$repo"/desktop/ || exit 40
+fi 
+
+if [ -d "$CWD"/yed ]; then
 rm -r graphics/yed || true
-cp -R "$CWD"/yed "$repo"/graphics/ || exit 40
+cp -R "$CWD"/yed "$repo"/graphics/ || exit 50
+fi 
+
 
 # Prepare SLACKBUILDS.TXT
 if [ ! -f "$CWD"/create-SLACKBUILDS_TXT ]; then
