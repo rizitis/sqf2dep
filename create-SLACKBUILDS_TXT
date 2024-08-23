@@ -45,14 +45,14 @@ REQUIRES1=$(cat "$sex/slack-required" | tr '\n' ' ')
 SUGGEST=$(cat "$sex/slack-suggests" | tr '\n' ' ')
 CONFLICTS=$(cat "$sex/slack-conflicts" | tr '\n' ' ') 
 SRCURL=$(sed -n 's/SRCURL=\(.*\)/\1/p' $sex/$sex.SlackBuild)
-VERSION=$(sed -n 's/VERSION=\(.*\)/\1/p' $sex/$sex.SlackBuild)
+VERSION1=$(sed -n 's/VERSION=\(.*\)/\1/p' $sex/$sex.SlackBuild)
 PRGNAM=$(sed -n 's/PRGNAM=\(.*\)/\1/p' $sex/$sex.SlackBuild)
 SortDesc=$(sed -n 's/SortDesc="\(.*\)"/\1/p' $sex/$sex.SlackBuild)
 
     echo SLACKBUILD NAME: "$PRGNAM" 
     echo SLACKBUILD LOCATION: rtz/"$sex"
     echo SLACKBUILD FILES: "$FILES1"
-    echo SLACKBUILD VERSION: "$VERSION"
+    echo SLACKBUILD VERSION: "$VERSION1"
     echo SLACKBUILD DOWNLOAD: "$SRCURL"
     echo SLACKBUILD REQUIRES: "$REQUIRES1"
     echo SLACKBUILD SUGGESTIONS: "$SUGGEST"
