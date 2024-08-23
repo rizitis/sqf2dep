@@ -140,22 +140,22 @@ cd $repo || exit
 
 # First add - replace patched folders ..
 rm -r system/{iotop,ktsuss} || true
-cp -R "$CWD"/{iotop,ktsuss} system/
+cp -R "$CWD"/{iotop,ktsuss} "$repo"/system/ || exit 10
 
 rm -r misc/recode || true
-cp -R "$CWD"/recode misc/
+cp -R "$CWD"/recode "$repo"/misc/ || exit 20
 
 rm -r desktop/yad || true
-cp -R yad desktop/
+cp -R yad "$repo"/desktop/ exit 30
 
 rm -r graphics/yed || true
-cp -R yed graphics/
+cp -R yed "$repo"/graphics/ || exit 40
 
 # Prepare SLACKBUILDS.TXT
 if [ ! -f "$CWD"/create-SLACKBUILDS_TXT ]; then
   wget -c https://raw.githubusercontent.com/rizitis/sqf2dep/main/create-SLACKBUILDS_TXT
 else
-  cp "$CWD"/create-SLACKBUILDS_TXT "$repo"/
+  cp "$CWD"/create-SLACKBUILDS_TXT "$repo"/ || exit 50
 fi
 
 chmod +x create-SLACKBUILDS_TXT
