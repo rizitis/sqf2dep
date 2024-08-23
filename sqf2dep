@@ -165,11 +165,16 @@ cp -R "$CWD"/yed "$repo"/graphics/ || exit 50
 fi 
 
 
+# ADD personal SlackBuilds that not exist in SBo
+if [ -d "$CWD"/rtz ]; then
+cp -R "$CWD"/rtz "$repo"/ || exit 8
+fi
+
 # Prepare SLACKBUILDS.TXT
 if [ ! -f "$CWD"/create-SLACKBUILDS_TXT ]; then
   wget -c https://raw.githubusercontent.com/rizitis/sqf2dep/main/create-SLACKBUILDS_TXT
 else
-  cp "$CWD"/create-SLACKBUILDS_TXT "$repo"/ || exit 50
+  cp "$CWD"/create-SLACKBUILDS_TXT "$repo"/ || exit 60
 fi
 
 chmod +x create-SLACKBUILDS_TXT
