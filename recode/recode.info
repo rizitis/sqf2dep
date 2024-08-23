@@ -1,0 +1,14 @@
+PRGNAM="recode"
+VERSION="3.7.13"
+HOMEPAGE="https://github.com/rrthomas/recode"
+DOWNLOAD="https://github.com/rrthomas/recode/releases/download/v3.7.14/recode-3.7.14.tar.gz \
+          https://codeload.github.com/coreutils/gnulib/tar.gz/refs/tags/v1.0 \
+          https://github.com/gnulib-modules/bootstrap/archive/8161486733/bootstrap-8161486733a34d19c7b2b741fab5ade4b6a31c98.tar.gz"
+MD5SUM="3348e4f4328e828d75178af9ace44352 \
+        042bd31255f32188cf1f0f599b6818a3 \
+        ed24221935b5a2aeb635e5541c1f2fa3"
+DOWNLOAD_x86_64=""
+MD5SUM_x86_64=""
+REQUIRES=""
+MAINTAINER="Jeremy Hansen"
+EMAIL="jebrhansen+SBo@gmail.com"
