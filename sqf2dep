@@ -182,17 +182,18 @@ bash create-SLACKBUILDS_TXT > SLACKBUILDS.TXT
 wait
 rm create-SLACKBUILDS_TXT*
 
+# DONT NEED THIS ANY MORE
 # create BUILDS.TXT
-if [ ! -f "$CWD"/BUILDS.bash ]; then
-wget -c https://raw.githubusercontent.com/rizitis/sqf2dep/main/BUILDS.bash
-else
-cp "$CWD"/BUILDS.bash "$repo"/
-fi
+#if [ ! -f "$CWD"/BUILDS.bash ]; then
+#wget -c https://raw.githubusercontent.com/rizitis/sqf2dep/main/BUILDS.bash
+#else
+#cp "$CWD"/BUILDS.bash "$repo"/
+#fi
 
-chmod +x BUILDS.bash
-bash BUILDS.bash
-wait
-rm BUILDS.bash
+#chmod +x BUILDS.bash
+#bash BUILDS.bash
+#wait
+#rm BUILDS.bash
 
 end_time=$(date +%s)
 
