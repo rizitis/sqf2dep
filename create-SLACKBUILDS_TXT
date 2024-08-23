@@ -15,7 +15,7 @@ for i in */*; do
   fi
   
   NAME=$(echo "$i" | cut -d "/" -f2)
-  FILES=$(ls "$i")
+  FILES=$(ls -1 "$i" | tr '\n' ' ')
   source "$i/${NAME}.info"
   DEPSONN=$(cat "$i/dependees-on" | tr '\n' ' ')
   DEPSON=$(echo "$DEPSONN" | sed 's/ *$//')
