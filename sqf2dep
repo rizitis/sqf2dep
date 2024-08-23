@@ -27,14 +27,15 @@ start_time=$(date +%s)
 
 # synchronize sbopkg with remote repo 
 sbopkg -r || exit
-
+wait
 # create for all packages that need deps a package.sqf file
 sqg -a
+wait
 rm /var/lib/sbopkg/queues/Mumble* || true
 
 # update local Slackware system database
 /usr/bin/updatedb
-
+wait
 # create package.dep and slack-required files
 dir=/tmp/sqf2dep
 rm -r $dir
