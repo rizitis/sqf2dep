@@ -184,8 +184,8 @@ rm create-SLACKBUILDS_TXT*
 
 # Create myown ChangeLog.TXT and remove README.
 cd "$repo" || exit
-rm README ChangeLog.txt
-
+rm README 
+mv ChangeLog.txt ChangeLog.SBo
 if [ ! -f "$CWD"/file_timestamps.txt ]; then
   wget -c https://raw.githubusercontent.com/rizitis/sqf2dep/main/file_timestamps.txt
 else
@@ -207,9 +207,8 @@ else
 fi
 
 wait
-cp ChangeLog.txt "$CWD"/
-mv file_timestamps.txt generate_initial_changelog.py "$CWD"/
-
+mv ChangeLog.txt file_timestamps.txt generate_initial_changelog.py "$CWD"/
+cat ChangeLog.SBo > "$CWD"/ChangeLog.SBo
 
 end_time=$(date +%s)
 
