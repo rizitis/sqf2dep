@@ -207,7 +207,8 @@ else
 fi
 
 wait
-mv ChangeLog.txt file_timestamps.txt "$CWD"/
+cp ChangeLog.txt "$CWD"/
+mv file_timestamps.txt generate_initial_changelog.py "$CWD"/
 
 
 end_time=$(date +%s)
