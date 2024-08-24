@@ -182,18 +182,33 @@ bash create-SLACKBUILDS_TXT > SLACKBUILDS.TXT
 wait
 rm create-SLACKBUILDS_TXT*
 
-# DONT NEED THIS ANY MORE
-# create BUILDS.TXT
-#if [ ! -f "$CWD"/BUILDS.bash ]; then
-#wget -c https://raw.githubusercontent.com/rizitis/sqf2dep/main/BUILDS.bash
-#else
-#cp "$CWD"/BUILDS.bash "$repo"/
-#fi
+# Create myown ChangeLog.TXT and remove README.
+cd "$repo" || exit
+rm README ChangeLog.txt
 
-#chmod +x BUILDS.bash
-#bash BUILDS.bash
-#wait
-#rm BUILDS.bash
+if [ ! -f "$CWD"/file_timestamps.txt ]; then
+  wget -c https://raw.githubusercontent.com/rizitis/sqf2dep/main/file_timestamps.txt
+else
+  cp "$CWD"/file_timestamps.txt "$repo"/ || exit 61
+fi
+
+if [ ! -f "$CWD"/ChangeLog.txt ]; then
+  wget -c https://raw.githubusercontent.com/rizitis/sqf2dep/main/ChangeLog.txt
+else
+  cp "$CWD"/ChangeLog.txt "$repo"/ || exit 61
+fi
+
+
+if [ ! -f "$CWD"/generate_initial_changelog.py ]; then
+  wget -c https://raw.githubusercontent.com/rizitis/sqf2dep/main/generate_initial_changelog.py
+else
+  cp "$CWD"/generate_initial_changelog.py "$repo"/ || exit 62
+  python3 generate_initial_changelog.py
+fi
+
+wait
+mv ChangeLog.txt file_timestamps.txt "$CWD"/
+
 
 end_time=$(date +%s)
 
